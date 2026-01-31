@@ -6,7 +6,18 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "app",
 	"main": "src/index.ts",
-	"compatibility_date": "2026-01-28",
+	"compatibility_date": "2024-03-20",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "vercel-apline",
+			"database_id": "57d148ba-6608-4654-9d67-6aec62769c6f",
+			"remote": true
+		}
+	],
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
 	"observability": {
 		"enabled": true
 	}

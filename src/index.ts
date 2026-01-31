@@ -5,6 +5,8 @@ import { Hono } from 'hono';
 
 const app = new Hono<{ Bindings: Env }>()
 
+app.get('/', (c) => c.text('Hono!'))
+
 app.get('/api/users', async (c) => {
   const prisma = new PrismaClient({ adapter: new PrismaD1(c.env.DB) });
   return c.json(await prisma.user.findMany());

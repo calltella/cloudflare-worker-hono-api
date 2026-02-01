@@ -6,6 +6,11 @@ import type { CreateNoteRequest } from '../types/note';
 
 export const notesRoute = new Hono<{ Bindings: Env }>();
 
+notesRoute.get('', async (c) => {
+	const prisma = new PrismaClient({ adapter: new PrismaD1(c.env.DB) });
+	return c.json(await prisma.note.findMany({ orderBy: { createdAt: 'desc' } }));
+});
+
 notesRoute.get('/', async (c) => {
 	const prisma = new PrismaClient({ adapter: new PrismaD1(c.env.DB) });
 	return c.json(await prisma.note.findMany({ orderBy: { createdAt: 'desc' } }));

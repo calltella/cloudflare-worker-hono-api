@@ -1,21 +1,17 @@
-import { PrismaClient } from './generated/prisma/';
-import { PrismaD1 } from '@prisma/adapter-d1';
-import type { Env } from './lib/env'
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import type { Env } from './lib/env';
 
-const app = new Hono<{ Bindings: Env }>()
+import { usersRoute } from './routes/users';
+import { notesRoute } from './routes/notes';
 
-app.get('/', (c) => c.text('Hono!'))
+const app = new Hono<{ Bindings: Env }>();
 
-app.get('/api/users', async (c) => {
-  const prisma = new PrismaClient({ adapter: new PrismaD1(c.env.DB) });
-  return c.json(await prisma.user.findMany());
-});
+app.use('*', cors());
 
-app.get('/api/users/:id', async (c) => {
-  const id = c.req.param('id');
-  const prisma = new PrismaClient({ adapter: new PrismaD1(c.env.DB) });
-  return c.json(await prisma.user.findUnique({ where: { id: Number(id) } }));
-});
+app.get('/', (c) => c.text('Hono!'));
+
+app.route('/api/users', usersRoute);
+app.route('/api/notes', notesRoute);
 
 export default app;

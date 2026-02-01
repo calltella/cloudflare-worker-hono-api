@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  runtime  = "cloudflare"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatarUrl     String?
+  passwordHash  String?
+  emailVerified DateTime?
+  isActive      Boolean   @default(true)
+  role          UserRole  @default(user)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  account Account?
+  session Session?
+
+  @@index([email])
+  @@map("users")
+}
+
+enum UserRole {
+  user
+  admin
+}
+
+enum ColorThemeKey {
+  default
+  blue
+  green
+  purple
+  orange
+}
+
+model Account {
+  id          String        @id @default(cuid())
+  userId      String        @unique
+  type        String
+  themeMode   String
+  colorThemes ColorThemeKey
+  //provider          String
+  //providerAccountId String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  //@@unique([provider, providerAccountId])
+  @@unique([userId, type])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@map("notes")
+}

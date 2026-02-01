@@ -8,10 +8,19 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "sqlite" // スキーマ解析時の内部チェックオフ中
 }
+
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
+}
+model Note {
+  id        Int   @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@map("notes")
 }

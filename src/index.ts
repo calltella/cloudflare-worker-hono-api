@@ -4,7 +4,7 @@ import { Hono } from 'hono';
 // import { cors } from 'hono/cors';
 // import type { Env } from './lib/env';
 
-// import { usersRoute } from './routes/users';
+import { usersRoute } from './routes/users';
 // import { notesRoute } from './routes/notes';
 
 // const app = new Hono<{ Bindings: Env }>();
@@ -19,6 +19,8 @@ const app = new Hono().basePath('/api');
 // export default app;
 
 app.get('/', (c) => c.text('Hello from Hono'));
+
+app.route('/users', usersRoute);
 
 export default class extends WorkerEntrypoint {
 	// HTTP / fetch 用（Hono に委譲）

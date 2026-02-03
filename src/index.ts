@@ -8,7 +8,7 @@ import { Hono } from 'hono';
 // import { notesRoute } from './routes/notes';
 
 // const app = new Hono<{ Bindings: Env }>();
-const app = new Hono();
+const app = new Hono().basePath('/api');
 // app.use('*', cors());
 
 // app.get('/', (c) => c.text('Hono!'));

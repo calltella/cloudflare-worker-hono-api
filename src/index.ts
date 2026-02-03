@@ -1,6 +1,6 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
 
-// import { Hono } from 'hono';
+import { Hono } from 'hono';
 // import { cors } from 'hono/cors';
 // import type { Env } from './lib/env';
 
@@ -8,7 +8,7 @@ import { WorkerEntrypoint } from 'cloudflare:workers';
 // import { notesRoute } from './routes/notes';
 
 // const app = new Hono<{ Bindings: Env }>();
-
+const app = new Hono();
 // app.use('*', cors());
 
 // app.get('/', (c) => c.text('Hono!'));
@@ -18,11 +18,15 @@ import { WorkerEntrypoint } from 'cloudflare:workers';
 
 // export default app;
 
+app.get('/', (c) => c.text('Hello from Hono'));
+
 export default class extends WorkerEntrypoint {
+	// HTTP / fetch 用（Hono に委譲）
 	async fetch(req: Request): Promise<Response> {
-		return new Response('Hello from B');
+		return app.fetch(req);
 	}
 
+	// RPC（Service Binding から直接呼ばれる）
 	async add(a: number, b: number): Promise<number> {
 		return a + b;
 	}

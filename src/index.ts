@@ -1,17 +1,29 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import type { Env } from './lib/env';
+import { WorkerEntrypoint } from 'cloudflare:workers';
 
-import { usersRoute } from './routes/users';
-import { notesRoute } from './routes/notes';
+// import { Hono } from 'hono';
+// import { cors } from 'hono/cors';
+// import type { Env } from './lib/env';
 
-const app = new Hono<{ Bindings: Env }>();
+// import { usersRoute } from './routes/users';
+// import { notesRoute } from './routes/notes';
 
-app.use('*', cors());
+// const app = new Hono<{ Bindings: Env }>();
 
-app.get('/', (c) => c.text('Hono!'));
+// app.use('*', cors());
 
-app.route('/api/users', usersRoute);
-app.route('/api/notes', notesRoute);
+// app.get('/', (c) => c.text('Hono!'));
 
-export default app;
+// app.route('/api/users', usersRoute);
+// app.route('/api/notes', notesRoute);
+
+// export default app;
+
+export default class extends WorkerEntrypoint {
+	async fetch(req: Request): Promise<Response> {
+		return new Response('Hello from B');
+	}
+
+	async add(a: number, b: number): Promise<number> {
+		return a + b;
+	}
+}

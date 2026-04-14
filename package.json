@@ -16,6 +16,7 @@
 		"wrangler": "^4.82.2"
 	},
 	"dependencies": {
-		"@opennextjs/cloudflare": "^1.19.1"
+		"@opennextjs/cloudflare": "^1.19.1",
+		"next": "^16.2.3"
 	}
 }

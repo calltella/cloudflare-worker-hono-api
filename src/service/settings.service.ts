@@ -9,7 +9,9 @@ import bcrypt from "bcryptjs";
 
 export async function putSessionToken(settings: SessionSettings): Promise<boolean> {
   const kv = await getKV();
-  const sessionKey = `session:${settings.hashedToken}`
+  const sessionKey = `session:${settings.hashedToken}`;
+  console.log('expiration:', Math.floor(settings.expiresAt.getTime() / 1000));
+  console.log('now:', Math.floor(Date.now() / 1000));
   try {
     await kv.put(sessionKey, JSON.stringify(settings),
       {
@@ -17,7 +19,11 @@ export async function putSessionToken(settings: SessionSettings): Promise<boolea
       });
     return true;
   } catch (err) {
-    console.log(`putSessionTokenError: ${JSON.stringify(err)}`);
+    if (err instanceof Error) {
+      console.log(`putSessionTokenError: ${err.message} / ${err.stack}`);
+    } else {
+      console.log(`putSessionTokenError: ${String(err)}`);
+    }
     return false;
   }
 }

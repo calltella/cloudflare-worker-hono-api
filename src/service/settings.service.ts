@@ -17,6 +17,7 @@ export async function putSessionToken(settings: SessionSettings): Promise<boolea
       });
     return true;
   } catch (err) {
+    console.log(`putSessionTokenError: ${JSON.stringify(err)}`);
     return false;
   }
 }

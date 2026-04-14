@@ -54,46 +54,46 @@ export async function findUserByEmail(email: string) {
 /**
  * 自分以外のUser取得を取得
  */
-export async function getOtherUsers() {
-  const session = await auth();
-  const database = await db();
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
+// export async function getOtherUsers() {
+//   const session = await auth();
+//   const database = await db();
+//   if (!session) {
+//     throw new Error("Unauthorized");
+//   }
 
-  return await database
-    .select({ id: users.id })
-    .from(users)
-    .where(dz.and(dz.ne(users.id, session.user.id), dz.eq(users.isActive, true)));
-}
+//   return await database
+//     .select({ id: users.id })
+//     .from(users)
+//     .where(dz.and(dz.ne(users.id, session.user.id), dz.eq(users.isActive, true)));
+// }
 
 /**
  * User,Account取得
  */
-export async function getUserWithAccount(userId: string) {
-  const db = await getDB();
+// export async function getUserWithAccount(userId: string) {
+//   const db = await getDB();
 
-  const results = await db
-    .select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      role: users.role,
-      isActive: users.isActive,
-      avatarUrl: users.avatarUrl,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
+//   const results = await db
+//     .select({
+//       id: users.id,
+//       email: users.email,
+//       name: users.name,
+//       role: users.role,
+//       isActive: users.isActive,
+//       avatarUrl: users.avatarUrl,
+//       createdAt: users.createdAt,
+//       updatedAt: users.updatedAt,
 
-      aplineUserId: aplineUsers.id,
-      aplineUserName: aplineUsers.displayName,
-    })
-    .from(users)
-    .where(dz.eq(users.id, userId))
-    .leftJoin(account, dz.eq(users.id, account.userId))
-    .leftJoin(aplineUsers, dz.eq(account.aplineUserId, aplineUsers.id))
+//       aplineUserId: aplineUsers.id,
+//       aplineUserName: aplineUsers.displayName,
+//     })
+//     .from(users)
+//     .where(dz.eq(users.id, userId))
+//     .leftJoin(account, dz.eq(users.id, account.userId))
+//     .leftJoin(aplineUsers, dz.eq(account.aplineUserId, aplineUsers.id))
 
-  return results[0] ?? null;
-}
+//   return results[0] ?? null;
+// }
 
 /**
  * User一覧取得
@@ -137,61 +137,61 @@ export async function getHashPassword(userId: string): Promise<string | null> {
  * アカウント取得(auth.session)
  * getUserWithAccount で代用できる？
  */
-export async function getAccount(userId: string) {
-  const database = await db();
+// export async function getAccount(userId: string) {
+//   const database = await db();
 
-  const result = await database
-    .select()
-    .from(account)
-    .where(dz.eq(account.userId, userId))
-    .limit(1);
+//   const result = await database
+//     .select()
+//     .from(account)
+//     .where(dz.eq(account.userId, userId))
+//     .limit(1);
 
-  return result[0] ?? null;
-}
+//   return result[0] ?? null;
+// }
 
 /**
  * アバター取得
  */
-export async function getUserAvatar(userId: string) {
-  const database = await db();
+// export async function getUserAvatar(userId: string) {
+//   const database = await db();
 
-  const result = await database
-    .select({ avatarUrl: users.avatarUrl })
-    .from(users)
-    .where(dz.eq(users.id, userId))
-    .limit(1);
+//   const result = await database
+//     .select({ avatarUrl: users.avatarUrl })
+//     .from(users)
+//     .where(dz.eq(users.id, userId))
+//     .limit(1);
 
-  return result[0] ?? null;
-}
+//   return result[0] ?? null;
+// }
 
 /**
  * aplineユーザー一覧取得
  */
-export async function getAplineUser() {
-  const database = await db();
+// export async function getAplineUser() {
+//   const database = await db();
 
-  const results = await database
-    .select()
-    .from(aplineUsers)
-    .orderBy(aplineUsers.id);
+//   const results = await database
+//     .select()
+//     .from(aplineUsers)
+//     .orderBy(aplineUsers.id);
 
-  return results;
-}
+//   return results;
+// }
 
 /**
  * aplineユーザー個別取得
  */
-export async function getAplineUserById(id: number) {
-  const database = await db();
+// export async function getAplineUserById(id: number) {
+//   const database = await db();
 
-  const result = await database
-    .select()
-    .from(aplineUsers)
-    .where(dz.eq(aplineUsers.id, id))
-    .limit(1);
+//   const result = await database
+//     .select()
+//     .from(aplineUsers)
+//     .where(dz.eq(aplineUsers.id, id))
+//     .limit(1);
 
-  return result[0] ?? null;
-}
+//   return result[0] ?? null;
+// }
 
 /**
  * アバター更新
@@ -218,172 +218,172 @@ export async function updateUserAvatar(
 /**
  * カラーテーマ更新
  */
-export async function updateUserColorTheme(
-  userId: string,
-  theme: ColorThemeKey
-) {
-  const kv = await getUserSettings(userId);
+// export async function updateUserColorTheme(
+//   userId: string,
+//   theme: ColorThemeKey
+// ) {
+//   const kv = await getUserSettings(userId);
 
-  if (!kv) { throw new Error("User settings not found"); }
+//   if (!kv) { throw new Error("User settings not found"); }
 
-  const settings: UserSettings = {
-    ...kv,
-    colorThemes: theme,
-    createdAt: getJstDateTimeString(),
-  };
+//   const settings: UserSettings = {
+//     ...kv,
+//     colorThemes: theme,
+//     createdAt: getJstDateTimeString(),
+//   };
 
-  await putUserSettings(userId, settings);
-  return settings;
-}
+//   await putUserSettings(userId, settings);
+//   return settings;
+// }
 
 /**
  * パスワード更新
  */
-export async function updateUserPassword(
-  userId: string,
-  password: string
-) {
-  const hashed = await bcrypt.hash(password, 10);
-  const database = await db();
+// export async function updateUserPassword(
+//   userId: string,
+//   password: string
+// ) {
+//   const hashed = await bcrypt.hash(password, 10);
+//   const database = await db();
 
-  return await database
-    .update(users)
-    .set({ passwordHash: hashed })
-    .where(dz.eq(users.id, userId))
-    .returning();
-}
+//   return await database
+//     .update(users)
+//     .set({ passwordHash: hashed })
+//     .where(dz.eq(users.id, userId))
+//     .returning();
+// }
 
 /**
  * プロフィール更新
  */
-export async function updateUserProfile(
-  userId: string,
-  name: string,
-  email: string
-) {
-  const database = await db();
+// export async function updateUserProfile(
+//   userId: string,
+//   name: string,
+//   email: string
+// ) {
+//   const database = await db();
 
-  return await database
-    .update(users)
-    .set({ name, email })
-    .where(dz.eq(users.id, userId))
-    .returning();
-}
-
-/**
- * 権限関係更新
- */
-export async function updateUserAuth(
-  userId: string,
-  role: "user" | "admin",
-  isActive: boolean
-) {
-  const database = await db();
-
-  return await database
-    .update(users)
-    .set({
-      role,
-      isActive,
-      updatedAt: new Date().toISOString(),
-    })
-    .where(dz.eq(users.id, userId))
-    .returning();
-}
+//   return await database
+//     .update(users)
+//     .set({ name, email })
+//     .where(dz.eq(users.id, userId))
+//     .returning();
+// }
 
 /**
  * 権限関係更新
  */
-export async function updateAplineUser(
-  userId: string,
-  aplineUserId: number,
-) {
-  const database = await db();
+// export async function updateUserAuth(
+//   userId: string,
+//   role: "user" | "admin",
+//   isActive: boolean
+// ) {
+//   const database = await db();
 
-  return await database
-    .update(account)
-    .set({
-      aplineUserId: aplineUserId
-    })
-    .where(dz.eq(account.userId, userId))
-    .returning();
-}
+//   return await database
+//     .update(users)
+//     .set({
+//       role,
+//       isActive,
+//       updatedAt: new Date().toISOString(),
+//     })
+//     .where(dz.eq(users.id, userId))
+//     .returning();
+// }
+
+/**
+ * 権限関係更新
+ */
+// export async function updateAplineUser(
+//   userId: string,
+//   aplineUserId: number,
+// ) {
+//   const database = await db();
+
+//   return await database
+//     .update(account)
+//     .set({
+//       aplineUserId: aplineUserId
+//     })
+//     .where(dz.eq(account.userId, userId))
+//     .returning();
+// }
 
 /**
  * テーマモード更新
  */
-export async function updateTheme(
-  userId: string,
-  themeMode: ThemeMode
-) {
-  const kv = await getUserSettings(userId);
+// export async function updateTheme(
+//   userId: string,
+//   themeMode: ThemeMode
+// ) {
+//   const kv = await getUserSettings(userId);
 
-  if (!kv) { throw new Error("User settings not found"); }
+//   if (!kv) { throw new Error("User settings not found"); }
 
-  const settings: UserSettings = {
-    ...kv,
-    themeMode: themeMode,
-    createdAt: getJstDateTimeString(),
-  };
+//   const settings: UserSettings = {
+//     ...kv,
+//     themeMode: themeMode,
+//     createdAt: getJstDateTimeString(),
+//   };
 
-  await putUserSettings(userId, settings);
-  return settings;
-}
+//   await putUserSettings(userId, settings);
+//   return settings;
+// }
 
 /**
  * 新規ユーザー作成
  */
-export async function createUser(
-  name: string,
-  email: string,
-  role: "user" | "admin",
-) {
-  await requireAdmin();
+// export async function createUser(
+//   name: string,
+//   email: string,
+//   role: "user" | "admin",
+// ) {
+//   await requireAdmin();
 
-  const database = await db();
-  const newUser = await database
-    .insert(users)
-    .values({
-      name: name,
-      email: email,
-      role: role,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    })
-    .returning();
+//   const database = await db();
+//   const newUser = await database
+//     .insert(users)
+//     .values({
+//       name: name,
+//       email: email,
+//       role: role,
+//       isActive: true,
+//       createdAt: new Date().toISOString(),
+//     })
+//     .returning();
 
-  const created = newUser[0];
+//   const created = newUser[0];
 
-  await database.insert(account).values({
-    userId: created.id,
-    type: "credentials",
-  });
+//   await database.insert(account).values({
+//     userId: created.id,
+//     type: "credentials",
+//   });
 
-  return created;
-}
+//   return created;
+// }
 
 /**
  * ユーザー削除
  */
-export async function deleteUser(
-  userId: string
-) {
-  const currentUser = await requireAdmin();
-  if (currentUser.user.id === userId) {
-    throw new Error("自分自身は削除できません");
-  }
-  const database = await db();
-  const result = await database
-    .update(users)
-    .set({
-      deletedAt: new Date().toISOString(),
-      isActive: false,
-    })
-    .where(dz.eq(users.id, userId))
-    .returning();
+// export async function deleteUser(
+//   userId: string
+// ) {
+//   const currentUser = await requireAdmin();
+//   if (currentUser.user.id === userId) {
+//     throw new Error("自分自身は削除できません");
+//   }
+//   const database = await db();
+//   const result = await database
+//     .update(users)
+//     .set({
+//       deletedAt: new Date().toISOString(),
+//       isActive: false,
+//     })
+//     .where(dz.eq(users.id, userId))
+//     .returning();
 
-  return result;
-}
+//   return result;
+// }
 
 
 

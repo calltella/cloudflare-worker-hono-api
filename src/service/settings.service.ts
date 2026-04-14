@@ -1,12 +1,26 @@
-// /app/src/service/settings.service.ts
+// src/service/settings.service.ts
 
 import { headers } from "next/headers";
 import { getKV } from "@/lib/utils/kv";
 import { DEFAULT_SETTINGS } from "@/types/user";
-import { UserSettings } from "@/types/user";
+import { UserSettings, SessionSettings } from "@/types/user";
 import { getJstDateTimeString } from "@/lib/utils/date";
-import { tr } from "zod/v4/locales";
 import bcrypt from "bcryptjs";
+
+export async function putSessionToken(settings: SessionSettings): Promise<boolean> {
+  const kv = await getKV();
+  const sessionKey = `session:${settings.hashedToken}`
+  try {
+    await kv.put(sessionKey, JSON.stringify(settings),
+      {
+        expiration: Math.floor(settings.expiresAt.getTime() / 1000),
+      });
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 
 export async function getUserSettings(userId: string): Promise<UserSettings | null> {
   const kv = await getKV();

@@ -1,7 +1,8 @@
 // api/token/route.ts
 import bcrypt from "bcryptjs"
 import { signAccessToken, signRefreshToken } from "@/lib/jwt";
-import { findUserByEmail, createSession } from "@/src/service/user.service"
+import { findUserByEmail } from "@/src/service/user.service";
+import { putSessionToken } from "@/src/service/settings.service";
 
 type LoginRequest = {
   email: string
@@ -34,8 +35,16 @@ export async function POST(req: Request) {
   const refreshToken = await signRefreshToken()
   const refreshExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
 
-  // ✅ D1保存
-  await createSession(user.id, refreshToken, refreshExpires)
+  // トークンはハッシュ化して保存（セキュリティ対策）
+  const hashedToken = await bcrypt.hash(refreshToken, 10);
+
+  // ✅ KV保存
+  await putSessionToken(
+    {
+      userId: user.id,
+      hashedToken,
+      expiresAt: refreshExpires
+    });
 
   return Response.json({
     accessToken,

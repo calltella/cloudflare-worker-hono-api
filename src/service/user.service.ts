@@ -408,22 +408,22 @@ export async function saveLoginHistory(
 /**
  * セッション情報保存
  */
-export async function createSession(
-  userId: string,
-  refreshToken: string,
-  expiresAt: Date
-) {
-  const database = await db();
+// export async function createSession(
+//   userId: string,
+//   refreshToken: string,
+//   expiresAt: Date
+// ) {
+//   const database = await db();
 
-  await database
-    .insert(sessions).values({
-      id: crypto.randomUUID(),
-      userId,
-      refreshToken,
-      expiresAt,
-      createdAt: new Date(),
-    })
-}
+//   await database
+//     .insert(sessions).values({
+//       id: crypto.randomUUID(),
+//       userId,
+//       refreshToken,
+//       expiresAt,
+//       createdAt: new Date(),
+//     })
+// }
 
 
 /**

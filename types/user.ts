@@ -15,6 +15,13 @@ export interface UserSettings {
   createdAt: string;
 }
 
+// KV形式(session)
+export interface SessionSettings {
+  userId: string;
+  hashedToken: string;
+  expiresAt: Date;
+}
+
 /**
  * KV用 ユーザー設定
 */

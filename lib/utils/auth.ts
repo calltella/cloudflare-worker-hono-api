@@ -2,6 +2,39 @@ import bcrypt from "bcryptjs";
 import { findUserByEmail, getAccount, saveLoginHistory } from "@/src/service/user.service"
 import type { User, NewLoginHistory } from "@/db/schema/users";
 
+import { verifyAccessToken } from "@/lib/jwt";
+
+export type AuthResult =
+  | { ok: true; user: any }
+  | { ok: false; response: Response };
+
+export async function requireAuth(req: Request): Promise<AuthResult> {
+  const authHeader = req.headers.get("authorization");
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return {
+      ok: false,
+      response: new Response("Unauthorized", { status: 401 }),
+    };
+  }
+
+  const token = authHeader.split(" ")[1];
+  const payload = await verifyAccessToken(token);
+
+  if (!payload) {
+    return {
+      ok: false,
+      response: new Response("Invalid token", { status: 401 }),
+    };
+  }
+
+  return {
+    ok: true,
+    user: payload,
+  };
+}
+
+
 /**
  * メールアドレスとハッシュ化前パスワードでユーザーを取得
  * @param email string

@@ -1,24 +1,55 @@
 
-import { verifyAccessToken } from "@/lib/jwt"
-import { notes } from "@/db/schema/notes";
-import { getDatabase } from "@/lib/utils/db";
-import * as dz from "drizzle-orm";
+import { getAllNotes, createNote, deleteNote } from "@/src/service/notes.service";
+import { requireAuth } from "@/lib/utils/auth";
+
+// 1件取得 GET    /notes/:id
+// 更新 PUT    /notes/:id
+
+// 一覧取得 GET /notes
 export async function GET(req: Request) {
-  //
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
 
-  const authHeader = req.headers.get("authorization")
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response("Unauthorized", { status: 401 })
-  }
-
-  const token = authHeader.split(" ")[1]
-  const payload = await verifyAccessToken(token)
-  if (!payload) {
-    return new Response("Invalid token", { status: 401 })
-  }
-  const db = await getDatabase();
-  const res = await db.select().from(notes).orderBy(dz.desc(notes.id));
-
-
+  // notes全件取得
+  const res = await getAllNotes();
   return Response.json(res)
+}
+
+// 作成 POST   /notes
+export async function POST(req: Request) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
+  const body = await req.json();
+
+  const { title, content } = body;
+
+  if (!title) {
+    return new Response("Title is required", { status: 400 });
+  }
+
+  const result = await createNote({ title, content });
+
+  return Response.json(result);
+}
+
+// 削除 DELETE /notes/:id
+export async function DELETE(req: Request) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
+  const body = await req.json();
+  const { id } = body;
+
+  if (!id) {
+    return new Response("ID is required", { status: 400 });
+  }
+
+  const result = await deleteNote(id);
+
+  if (!result) {
+    return new Response("Note not found", { status: 404 });
+  }
+
+  return Response.json({ success: true, deleted: result });
 }

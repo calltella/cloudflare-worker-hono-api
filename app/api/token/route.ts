@@ -35,6 +35,7 @@ export async function POST(req: Request) {
   const refreshToken = await signRefreshToken()
   const refreshExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 有効期限７日
 
+  console.log('RawrefreshToken:', refreshToken);
   // トークンはハッシュ化して保存（セキュリティ対策）
   const hashedToken = await bcrypt.hash(refreshToken, 10);
 
@@ -42,7 +43,7 @@ export async function POST(req: Request) {
   await putSessionToken(
     {
       userId: user.id,
-      hashedToken,
+      hashedToken: hashedToken,
       expiresAt: refreshExpires
     });
 

@@ -35,6 +35,7 @@ export async function getSessionToken(hashedToken: string): Promise<SessionSetti
 export async function putSessionToken(settings: SessionSettings): Promise<boolean> {
   const kv = await getKV();
   const sessionKey = `session:${settings.hashedToken}`;
+
   console.log('expiration:', Math.floor(settings.expiresAt.getTime() / 1000));
   console.log('now:', Math.floor(Date.now() / 1000));
   console.log('putSessionToken - sessionKey:', sessionKey);

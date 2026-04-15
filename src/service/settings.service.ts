@@ -8,9 +8,9 @@ import { getJstDateTimeString } from "@/lib/utils/date";
 import bcrypt from "bcryptjs";
 
 // セッションを取得
-export async function getSessionToken(hashedToken: string): Promise<SessionSettings | null> {
+export async function getSessionToken(refreshToken: string): Promise<SessionSettings | null> {
   const kv = await getKV();
-  const sessionKey = `session:${hashedToken}`;
+  const sessionKey = `session:${refreshToken}`;
 
   console.log(`getSessionToken sessionKey: ${sessionKey}`)
 
@@ -32,9 +32,9 @@ export async function getSessionToken(hashedToken: string): Promise<SessionSetti
 }
 
 // セッションを保存
-export async function putSessionToken(settings: SessionSettings): Promise<boolean> {
+export async function putSessionToken(settings: SessionSettings, refreshToken: string): Promise<boolean> {
   const kv = await getKV();
-  const sessionKey = `session:${settings.hashedToken}`;
+  const sessionKey = `session:${refreshToken}`;
 
   console.log('expiration:', Math.floor(settings.expiresAt.getTime() / 1000));
   console.log('now:', Math.floor(Date.now() / 1000));

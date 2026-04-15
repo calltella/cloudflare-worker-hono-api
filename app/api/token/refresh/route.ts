@@ -16,8 +16,11 @@ export async function POST(req: Request) {
     return new Response("Bad Request", { status: 400 })
   }
 
+  // KVに保存してあるrefreshTokenはハッシュ化済
+  const hashedToken = await bcrypt.hash(refreshToken, 10);
+
   // KVに書き換えてcompair
-  const session = await getSessionToken(refreshToken)
+  const session = await getSessionToken(hashedToken)
 
   // セッションが見つからない
   if (!session) {

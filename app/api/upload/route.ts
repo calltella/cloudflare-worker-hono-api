@@ -1,6 +1,6 @@
 
 import { requireAuth } from "@/lib/utils/auth";
-import { uploadAvatarToR2 } from "@/src/service/storage.service";
+import { uploadAvatarToR2, deleteAvatarToR2 } from "@/src/service/storage.service";
 
 
 /**
@@ -28,6 +28,9 @@ export async function POST(req: Request) {
     if (!file) {
       return new Response("file is required", { status: 400 });
     }
+    const body = await req.json();
+
+    const { BucketType } = body;
 
     const fileName = await uploadAvatarToR2(file)
 
@@ -39,4 +42,25 @@ export async function POST(req: Request) {
     console.error(err);
     return new Response("Upload failed", { status: 500 });
   }
+}
+
+// 削除 DELETE /notes/:id
+export async function DELETE(req: Request) {
+  const auth = await requireAuth(req);
+  if (!auth.ok) return auth.response;
+
+  const body = await req.json();
+  const { fileName } = body;
+
+  if (!fileName) {
+    return new Response("fileName is required", { status: 400 });
+  }
+  console.log(`deleteFile: ${JSON.stringify(fileName)}`);
+  const result = await deleteAvatarToR2(fileName);
+
+  if (!result) {
+    return new Response("fileName not found", { status: 404 });
+  }
+
+  return Response.json({ success: true, deleted: result });
 }

@@ -16,3 +16,31 @@ export async function uploadAvatarToR2(
 
   return fileName; // ← DBにはフルURLではなくパスのみ保存
 }
+
+const DEFAULT_AVATAR = "default.png";
+
+export async function deleteAvatarToR2(
+  fileName: string | null | undefined
+): Promise<boolean> {
+  try {
+    // ✅ 無効値ガード
+    if (!fileName) return false;
+
+    // ✅ default画像は削除しない
+    if (fileName === DEFAULT_AVATAR) {
+      console.log("Skip delete: default avatar");
+      return false;
+    }
+
+    const r2 = await getR2("public");
+
+    const key = `avatars/${fileName}`;
+
+    await r2.delete(key);
+
+    return true;
+  } catch (error) {
+    console.error("R2 delete error:", error);
+    return false;
+  }
+}

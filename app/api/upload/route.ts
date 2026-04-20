@@ -25,18 +25,18 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
+    const bucketType = formData.get("BucketType") as string | null;
+
     if (!file) {
       return new Response("file is required", { status: 400 });
     }
-    const body = await req.json();
-
-    const { BucketType } = body;
 
     const fileName = await uploadAvatarToR2(file)
 
     return Response.json({
       success: true,
       fileName,
+      bucketType,
     });
   } catch (err) {
     console.error(err);
